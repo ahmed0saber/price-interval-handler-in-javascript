@@ -8,17 +8,22 @@ const priceHandlers = document.querySelectorAll(".price-handler"),
     minPriceAmount = parseInt(minPriceAmountHolder.textContent), maxPriceAmount = parseInt(maxPriceAmountHolder.textContent)
 
 const handleSlidersMovement = (e) => {
-    let eventPosition, isMinPriceHandler = e.target.classList.contains("min-price-handler")
+    let eventPositionX, eventPositionY, isMinPriceHandler = e.target.classList.contains("min-price-handler")
     if (e.type === "touchmove") {
-        eventPosition = e.touches[0].clientX
+        eventPositionX = e.touches[0].clientX
+        eventPositionY = e.touches[0].clientY
     } else {
-        eventPosition = e.clientX
+        eventPositionX = e.clientX
+        eventPositionY = e.clientY
     }
-    if(eventPosition < priceRange.getBoundingClientRect().left || eventPosition > priceRange.getBoundingClientRect().left + priceRange.offsetWidth){
+    if(eventPositionX < priceRange.getBoundingClientRect().left || 
+        eventPositionX > priceRange.getBoundingClientRect().left + priceRange.offsetWidth || 
+        eventPositionY < priceRange.getBoundingClientRect().top || 
+        eventPositionY > priceRange.getBoundingClientRect().top + priceRange.offsetHeight){
         handleMouseUp(e)
         return
     }
-    updateSlidersPosition(eventPosition, isMinPriceHandler)
+    updateSlidersPosition(eventPositionX, isMinPriceHandler)
     updateCoveredPriceBar()
     updatePriceHolders()
 }
@@ -52,8 +57,8 @@ const updateCoveredPriceBar = () => {
     coveredPriceBar.style.right = priceRange.offsetWidth - minPriceHandler.offsetLeft - priceHandlers[0].offsetWidth + "px"
 }
 
-const updateSlidersPosition = (eventPosition, isMinPriceHandler) => {
-    let positionRight = priceRange.offsetWidth - (eventPosition - priceRange.getBoundingClientRect().left) - (priceHandlers[0].offsetWidth / 2)
+const updateSlidersPosition = (eventPositionX, isMinPriceHandler) => {
+    let positionRight = priceRange.offsetWidth - (eventPositionX - priceRange.getBoundingClientRect().left) - (priceHandlers[0].offsetWidth / 2)
     if (isMinPriceHandler) {
         if (positionRight > 0 && positionRight < priceRange.offsetWidth - maxPriceHandler.offsetLeft - priceHandlers[0].offsetWidth) {
             minPriceHandler.style.right = Math.floor(positionRight) + "px"
