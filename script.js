@@ -7,8 +7,11 @@ const priceHandlers = document.querySelectorAll(".price-handler"),
     maxPriceAmountHolder = document.querySelector(".max-price-amount"),
     minPriceAmount = parseInt(minPriceAmountHolder.textContent), maxPriceAmount = parseInt(maxPriceAmountHolder.textContent)
 
+let isMinPriceHandler
+
 const handleSlidersMovement = (e) => {
-    let eventPositionX, eventPositionY, isMinPriceHandler = e.target.classList.contains("min-price-handler")
+    const EVENT_LIMIT = 10
+    let eventPositionX, eventPositionY
     if (e.type === "touchmove") {
         eventPositionX = e.touches[0].clientX
         eventPositionY = e.touches[0].clientY
@@ -16,10 +19,10 @@ const handleSlidersMovement = (e) => {
         eventPositionX = e.clientX
         eventPositionY = e.clientY
     }
-    if(eventPositionX < priceRange.getBoundingClientRect().left || 
-        eventPositionX > priceRange.getBoundingClientRect().left + priceRange.offsetWidth || 
-        eventPositionY < priceRange.getBoundingClientRect().top || 
-        eventPositionY > priceRange.getBoundingClientRect().top + priceRange.offsetHeight){
+    if (eventPositionX < priceRange.getBoundingClientRect().left - EVENT_LIMIT ||
+        eventPositionX > priceRange.getBoundingClientRect().left + priceRange.offsetWidth + EVENT_LIMIT ||
+        eventPositionY < priceRange.getBoundingClientRect().top - EVENT_LIMIT ||
+        eventPositionY > priceRange.getBoundingClientRect().top + priceRange.offsetHeight + EVENT_LIMIT) {
         handleMouseUp(e)
         return
     }
@@ -28,8 +31,9 @@ const handleSlidersMovement = (e) => {
     updatePriceHolders()
 }
 
-const handleMouseDown = (e) => {
+const handleMouseDown = (e, el) => {
     e.preventDefault()
+    isMinPriceHandler = el.classList.contains("min-price-handler")
     if (e.type === "mousedown") {
         window.addEventListener("mousemove", handleSlidersMovement)
     } else {
@@ -71,8 +75,8 @@ const updateSlidersPosition = (eventPositionX, isMinPriceHandler) => {
 }
 
 priceHandlers.forEach(priceHandler => {
-    priceHandler.addEventListener("mousedown", handleMouseDown)
+    priceHandler.addEventListener("mousedown", (e) => handleMouseDown(e, priceHandler))
     priceHandler.addEventListener("mouseup", handleMouseUp)
-    priceHandler.addEventListener("touchstart", handleMouseDown)
+    priceHandler.addEventListener("touchstart", (e) => handleMouseDown(e, priceHandler))
     priceHandler.addEventListener("touchend", handleMouseUp)
 })
