@@ -32,7 +32,6 @@ const handleSlidersMovement = (e) => {
 }
 
 const handleMouseDown = (e, el) => {
-    e.preventDefault()
     isMinPriceHandler = el.classList.contains("min-price-handler")
     if (e.type === "mousedown") {
         window.addEventListener("mousemove", handleSlidersMovement)
@@ -75,8 +74,8 @@ const updateSlidersPosition = (eventPositionX, isMinPriceHandler) => {
 }
 
 priceHandlers.forEach(priceHandler => {
-    priceHandler.addEventListener("mousedown", (e) => handleMouseDown(e, priceHandler))
+    priceHandler.addEventListener("mousedown", (e) => handleMouseDown(e, priceHandler), {passive: true})
     priceHandler.addEventListener("mouseup", handleMouseUp)
-    priceHandler.addEventListener("touchstart", (e) => handleMouseDown(e, priceHandler))
+    priceHandler.addEventListener("touchstart", (e) => handleMouseDown(e, priceHandler), {passive: true})
     priceHandler.addEventListener("touchend", handleMouseUp)
 })
